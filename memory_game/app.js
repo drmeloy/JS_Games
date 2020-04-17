@@ -51,8 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   ];
 
-  // Create board
+  cardArray.sort(() => .5 - Math.random());
   const grid = document.querySelector('.grid');
+  const resultDisplay = document.querySelector('#result');
+  let cardsChosen = [];
+  let cardsChosenId = [];
+  const cardsWon = [];
+  
+  // Create board
   const createBoard = () => {
     for (let i = 0; i < cardArray.length; i++){
       const card = document.createElement('img');
@@ -61,6 +67,42 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('click', flipCard);
       grid.appendChild(card);
     }
-  }
+  };
+
+  // Check for matches
+  const checkForMatch = () => {
+    const cards = document.querySelectorAll('img');
+    const optionOneId = cardsChosenId[0];
+    const optionTwoId = cardsChosenId[1];
+    if (cardsChosen[0] === cardsChosen[1]){
+      alert('You found a match!');
+      cards[optionOneId].setAttribute('src', './images/white.png');
+      cards[optionTwoId].setAttribute('src', './images/white.png');
+      cardsWon.push(cardsChosen);
+    } else {
+      cards[optionOneId].setAttribute('src', './images/blank.png');
+      cards[optionTwoId].setAttribute('src', './images/blank.png');
+      alert('Sorry! Try again')
+    }
+    cardsChosen = [];
+    cardsChosenId = [];
+    resultDisplay.textContent = cardsWon.length;
+    if (cardsWon.length === cardArray.length / 2){
+      resultDisplay.textContent = 'Congratulations! You won!'
+    };
+  };
+
+  // Flip card
+  const flipCard = ({ target }) => {
+    const cardId = target.getAttribute('data-id');
+    cardsChosen.push(cardArray[cardId].name);
+    cardsChosenId.push(cardId);
+    target.setAttribute('src', cardArray[cardId].img);
+    if (cardsChosen.length === 2){
+      setTimeout(checkForMatch, 200);
+    };
+  };
+
+  createBoard();
 
 });
